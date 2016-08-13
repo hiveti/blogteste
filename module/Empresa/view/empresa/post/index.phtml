@@ -1,0 +1,138 @@
+<?php 
+$modulo = 'geral'; 
+
+use Empresa\Model\Basico;
+use Zend\Session\Container;
+
+?>
+
+<!-- DataTables -->
+<?php echo $this->headLink()
+                        ->prependStylesheet($this->basePath( $modulo ) . '/plugins/datatables/dataTables.bootstrap.css')
+                        ->prependStylesheet($this->basePath( $modulo ) . '/bootstrap/css/jquery-ui.min.css');    
+                                 
+                        
+$sessao = new Container('mensagempost');
+$sessaousuario = new Container('Auth');
+$modelbasico = new Basico($adapter);
+
+$this->layout()->setVariable('titulo', ' Listagem dos Posts <i class="fa fa-sticky-note"></i>');
+
+	  
+?>
+
+	<!--Se vier da exclusão via ajax -->
+	<div id='mensagem-alert'></div>
+	
+	<!--Se vier da alteração ou cadastro -->
+	<?php
+		if($sessao->mensagem != null){
+			echo 
+			"<div id='mensagem-alert' class='alert btn-success text-center' role='alert'>
+				<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>".$sessao->mensagem."
+			</div>";
+		}
+	?>
+	
+	<table id="example1" class="table table-bordered table-striped">
+	<thead>
+	<tr>
+	  <th>Id</th>
+	  <th>Título</th>
+	  <th>Autor</th>
+	  <th>Data Modificação</th>
+	  <th>Ações</th>
+	</tr>
+	</thead>
+	<tbody id="tablepost">
+	<?php
+	
+	if(count($rowset) > 0){
+	
+		foreach ($rowset as $post): 
+			if($post['cdusuario'] == $sessaousuario->cdusuario){
+				$class = '"fa fa-pencil-square-o"';
+				$par = 'alterar/';
+			}else{
+				$class = '"fa fa-search" aria-hidden="true"';
+				$par = 'visualizar/';
+			}
+			
+			?>
+			<tr>
+				<td><?php echo $post['cdpost']?></td>
+				<td><?php echo $post['titulo']?></td>
+				<td><?php echo $post['nmusuario']?></td>
+						
+				<?php 
+					if(empty($post['dtalteracao'])){
+						 echo "<td>".$modelbasico->datafromBanco($post['dtcriacao'])."</td>";
+					  }else{
+					  	 echo "<td>".$modelbasico->datafromBanco($post['dtalteracao'])."</td>";
+					  }
+			    ?>
+				<td>
+					<a href="/empresa/post/<?= $par; ?><?= $post['cdpost']?>" title="EDITAR"><i class=<?= $class; ?>></i></a>
+					<?php
+						if($post['cdusuario'] == $sessaousuario->cdusuario){
+							 echo '<a onclick="excluirPost(\''.$post['cdpost'].'\')" style="cursor: pointer"><i class="fa fa-times"></i></a>';
+						}	
+					?>
+				</td>
+			</tr>
+		<?php  
+		endforeach;
+	}?>
+	
+	</tbody>
+	</table>
+  
+        
+
+
+
+<p>
+	<a class="btn btn-primary" href="<?php echo $this->url('empresa/default',
+	array('controller' => 'post', 'action' => 'cadastrar'))?>">Adicionar Novo</a>
+</p>
+
+
+
+ <!-- DataTables -->
+<?php 
+
+echo '<div style="display:none;" id="dialog-deletar-post" title="">
+	  	Deseja realmente deletar este post?
+      </div>';
+
+
+$sessao->getManager()->getStorage()->clear('mensagempost');
+
+echo $this->headScript()
+   			->prependFile($this->basePath( $modulo ) . '/plugins/tiny_mce/tiny_mce.js')
+            ->prependFile($this->basePath( $modulo ) . '/dist/js/demo.js')
+            ->prependFile($this->basePath( $modulo ) . '/dist/js/app.min.js')
+            ->prependFile($this->basePath( $modulo ) . '/plugins/fastclick/fastclick.js')
+     		->prependFile($this->basePath( $modulo ) . '/plugins/slimScroll/jquery.slimscroll.min.js')
+     		->prependFile($this->basePath( $modulo ) . '/plugins/datatables/dataTables.bootstrap.min.js')
+            ->prependFile($this->basePath( $modulo ) . '/plugins/datatables/jquery.dataTables.min.js')     
+            ->prependFile($this->basePath( $modulo ) . '/bootstrap/js/bootstrap.min.js')
+            ->prependFile($this->basePath( 'empresa' ) . '/js/funcoes-post.js')
+            ->prependFile($this->basePath( $modulo ) . '/plugins/jQueryUI/jquery-ui.min.js')
+            ->prependFile($this->basePath( $modulo ) . '/plugins/jQuery/jQuery-2.1.4.min.js')
+?>
+        
+<!-- page script -->
+<script>
+  $(function () {
+    $("#example1").DataTable();
+/*    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
+    });*/
+  });
+</script>

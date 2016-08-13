@@ -1,0 +1,26 @@
+<?php
+use Zend\Session\Container;
+
+ $this->layout()->setVariable('titulo', ' Principal');
+ $modulo = 'geral';
+ 
+ $sessaousuario = new Container('Auth');
+ 
+?>	
+
+Olá <?= $sessaousuario->nmusuario; ?>, fique a vontade em nossa plataforma!
+
+<?php
+
+echo $this->headScript()
+    ->prependFile($this->basePath( $modulo ) . '/dist/js/demo.js')
+    ->prependFile($this->basePath( $modulo ) . '/dist/js/app.min.js')
+    ->prependFile($this->basePath( $modulo ) . '/plugins/fastclick/fastclick.js')
+	->prependFile($this->basePath( $modulo ) . '/plugins/slimScroll/jquery.slimscroll.min.js')
+    ->prependFile($this->basePath( $modulo ) . '/bootstrap/js/bootstrap.min.js')
+    ->prependFile($this->basePath( $modulo ) . '/plugins/jQuery/jQuery-2.1.4.min.js');
+
+?>
+
+
+
