@@ -48,5 +48,4 @@ class IndexController extends AbstractActionController
     		
     }
     
-    
 }
