@@ -91,7 +91,7 @@ class Module
             $sessao = new Container('Auth');
 			
             if (!$sessao->admin) {			
-                return $controller->redirect()->toRoute('login');
+                return $controller->redirect()->toRoute('empresa');
             }
       
         }
