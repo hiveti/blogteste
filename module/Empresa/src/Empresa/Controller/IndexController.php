@@ -39,13 +39,6 @@ class IndexController extends AbstractActionController
  
 		 $view =  new ViewModel();
 		 return $view->setTerminal(true);
-	
-    }
-    
-    public function loginAction()
-    {
-    	return $this->redirect()->toUrl('/empresa/login');
-    		
     }
     
 }
